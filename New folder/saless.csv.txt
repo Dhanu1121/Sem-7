@@ -1,0 +1,340 @@
+Group-A:-
+1) Write a program non-recursive and recursive program to calculate Fibonacci numbers and analyze their time (O)n and space complexity O(1) and O(n)/O(2^n).
+# Program to display the Fibonacci sequence up to n-th term using non-recursive
+nterms = int(input("Enter number of terms"))
+n1, n2 = 0,1
+count = 0
+#check if the number of terms is valid
+if nterms <= 0:
+    print("Please enter a positive integer")
+elif nterms == 1:
+    print("Fibonacci sequence upto", nterms,":")
+    print(n1)
+    
+#generate fibonacci sequence
+else:
+    print("Fibonacci sequence:")
+    while count < nterms:
+        print(n1)
+        nth = n1 + n2
+        n1 = n2
+        n2 = nth
+        count += 1
+
+# Program to display the Fibonacci sequence up to n-th term using recursive method
+def fibonacci(n):
+    if(n <= 1):
+        return n
+    else:
+        return(fibonacci(n-1) + fibonacci(n-2))
+n = int(input("Enter number of terms:"))
+print("Fibonacci sequence:")
+for i in range(n):
+    print(fibonacci(i))
+
+2) Write a program to implement Huffman Encoding using a greedy strategy.
+ # A Huffman Tree Node
+    
+import heapq
+
+class node:
+    def __init__(self, freq, symbol, left=None, right=None):
+        # frequency of symbol
+        self.freq = freq
+
+        # symbol name (character)
+        self.symbol = symbol
+
+        # node left of current node
+        self.left = left
+
+        # node right of current node
+        self.right = right
+
+        # tree direction (0/1)
+        self.huff = ''
+
+    def __lt__(self, nxt):
+        return self.freq < nxt.freq
+# utility function to print huffman
+# codes for all symbols in the newly
+# created Huffman tree
+def printNodes(node, val=''):
+    
+    # huffman code for current node
+    newVal = val + str(node.huff)
+
+    # if node is not an edge node
+    # then traverse inside it
+    if(node.left):
+        printNodes(node.left, newVal)
+    if(node.right):
+        printNodes(node.right, newVal)
+
+    # if node is edge node then display its huffman code
+    if(not node.left and not node.right):
+        print(f"{node.symbol} -> {newVal}")
+
+
+# characters for huffman tree
+chars = ['a', 'b', 'c', 'd', 'e', 'f']
+
+# frequency of characters
+freq = [ 5, 9, 12, 13, 16, 45]
+
+# list containing unused nodes
+nodes = []
+
+# converting characters and frequencies
+# into huffman tree nodes
+for x in range(len(chars)):
+    heapq.heappush(nodes, node(freq[x], chars[x]))
+
+while len(nodes) > 1:
+    
+    # sort all the nodes in ascending order
+    # based on their frequency
+    left = heapq.heappop(nodes)
+    right = heapq.heappop(nodes)
+
+    # assign directional value to these nodes
+    left.huff = 0
+    right.huff = 1
+
+    # combine the 2 smallest nodes to create
+    # new node as their parent
+    newNode = node(left.freq+right.freq, left.symbol+right.symbol, left, right)
+
+    heapq.heappush(nodes, newNode)
+
+# Huffman Tree 
+printNodes(nodes[0])
+
+3) program to solve a fractional Knapsack problem using a greedy method.O(nlogn).
+class Item:
+    def __init__(self, value, weight):
+        self.value = value
+        self.weight = weight
+def fractionalKnapsack(W, arr):
+    arr.sort(key = lambda x: (x.value/x.weight), reverse = True)
+    finalvalue = 0.0
+    for item in arr:
+        if item.weight <= W:
+            W -= item.weight
+            finalvalue += item.value
+            #if we cant add current item, add fractional part of it
+        else:
+            finalvalue += item.value * W / item.weight
+            break
+    #returing final value
+    return finalvalue
+
+if __name__ == "__main__":
+    W = 50
+    arr = [Item(60, 10), Item(100, 20), Item(120, 30)]
+    #functional call
+    max_val = fractionalKnapsack(W, arr)
+    print(max_val)
+
+4)Write a program to solve a 0-1 Knapsack problem using dynamic programming or branch
+and bound strategy.
+#code
+def knapSack(W, wt, val, n):
+    
+    #base case
+    if n == 0 or W == 0:
+        return 0
+    
+    #if weight of the nth item is more than knapsack of capacity W,
+    #then this item cannot be included in the optimal solution
+    if (wt[n-1] > W):
+        return knapSack(W, wt, val, n-1)
+    
+    #return the maximum of two cases:(1)nth item included (2)not included
+    else:
+        return max(val[n-1] + knapSack(W - wt[n-1], wt, val, n-1), knapSack(W,wt,val,n-1))
+        
+val = [60, 100, 120]
+wt = [10, 20, 30]
+W = 50
+n = len(val)
+print(knapSack(W,wt,val,n))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Group-C:-
+1) Installation of Meta mask and study spending Ether per transaction. OR
+   Understand and explore the working of blockchain technology and its applications.
+Steps to create metamask:
+Step 1: Go to Chrome Web Store Extensions Section.
+Step 2: Search MetaMask.
+Step 3: Download the metamask.
+Step 4: Click the Add to Chrome button.
+Step 5: Once installation is complete this page will be displayed. Click on the Get Started button.Get started
+Step 6: This is the first time creating a wallet, so click the Create a Wallet button. If there is already a wallet then import the already created using the Import Wallet button.Create Wallet
+Step 7: Click I Agree button to allow data to be collected to help improve MetaMask or else click the No Thanks button. The wallet can still be created even if the user will click on the No Thanks button.
+Step 8: Create a password for your wallet. This password is to be entered every time the browser is launched and wants to use MetaMask. A new password needs to be created if chrome is uninstalled or if there is a switching of browsers. In that case, go through the Import Wallet button. This is because MetaMask stores the keys in the browser. Agree to Terms of Use.
+Step 9: "METAMASK" Account created successfully
+
+2) Create your own wallet using Metamask for crypto transactions.
+   Understand and explore the working of blockchain technology and its application.
+Step 1: Login to the Metamask account and checked the account before transactions . Accopunt 01 is having 0 RopstenETH.
+Step 2: Login to the metamask account and checked the account before transactions . "account 1" account 02 is having 1 ETH . Start the transaction from the "account 1". click on send.
+Step 3: Enter the public address of "Account 1".
+Step4: Click the balance account in asset and enter the account to send the ETH. Check the details of the asset and amount. Click on the next button.
+Step5:Transaction status will shown pending for few time wait.
+
+3) Write a smart contract on a test network, for Bank account of a customer for following operations: Deposit money, Withdraw Money, Show balance
+
+pragma solidity ^0.6.6;
+
+contract BankContract {
+ 
+    struct client_account{
+        int client_id;
+        address client_address;
+        uint client_balance_in_ether;
+    }
+
+    client_account[] clients;
+
+    int clientCounter;
+    address payable manager;
+
+    modifier onlyClients() {
+        bool isclient = false;
+        for(uint i=0;i<clients.length;i++){
+            if(clients[i].client_address == msg.sender){
+                isclient = true;
+                break;
+            }
+        }
+        require(isclient, "Only clients can call this!");
+        _;
+    }
+
+    constructor() public{
+        clientCounter = 0;
+    }
+
+   receive() external payable { }
+
+    function joinAsClient() public payable returns(string memory){      
+        clients.push(client_account(clientCounter++, msg.sender, address(msg.sender).balance));
+        return "";
+    }
+
+    function deposit() public payable onlyClients{
+        payable(address(this)).transfer(msg.value);
+    }
+
+    function withdraw(uint amount) public payable onlyClients{
+        msg.sender.transfer(amount * 1 ether);
+    }
+
+    function getContractBalance() public view returns(uint){
+        return address(this).balance;
+    }
+}
+
+
+
+4) Write a program in solidity to create Student data. Use the following constructs:
+Structures, Arrays, Fallback
+//code
+pragma solidity ^0.6.0;
+contract student_management {
+    struct student {
+        int stud_id;
+        string name;
+        string department;
+    }
+    student[] students;
+    function add_stud(int stud_id, string memory name, string memory department ) public {
+        student memory stud = student(stud_id , name, department);
+        students.push(stud);
+    }
+    function getStudent(int stud_id) public view returns(string memory, string memory) {
+        for(uint i = 0; i<students.length; i++) {
+            student memory stud = students [i];
+            if(stud.stud_id == stud_id)  {
+                return(stud.name, stud.department);
+
+            }
+        }
+        return("not found","not found");
+
+    }
+
+}
+
+
+5) Write a survey report on types of Blockchains and its real time use cases.
+There are 4 types of blockchain:
+-Public Blockchain: No central authority
+-Private Blockchain: Controlled by one Authority
+-Hybrid Blockchain: Controlled by a permissionless process
+-Consortium Blockchain: Controlled by group. It is a creative approach that solves the needs of the organization. This blockchain validates the transaction and also initiates or receives transactions.
+Advantages: Trustable, Secure, Anonymous Nature, Decentralized.
+Disadvantages: transaction very slow, Energy Consumption, No central authority.
+
+6) mini project: Develop a Blockchain-based application for health-related medical records.
+// SPDX-License-Identifier: MIT
+pragma solidity 0.6;
+contract Health_Records
+{
+    struct Patient
+
+    {
+        int patient_id;
+        string name;
+        string height;
+        string weight;
+        string disease;
+        string symptom1;
+        string symptom2;
+    }
+    Patient[] Patients;
+
+    function addPatient(int patient_id, string memory name, string 
+    memory height, string memory weight, string memory disease, string
+    memory symptom1, string memory symptom2) public 
+    {
+        Patient memory patient =
+Patient(patient_id,name,height,weight,disease,symptom1,symptom2);
+Patients.push(patient);
+    }
+    function getPatient(int patient_id) public view returns(string
+    memory, string memory, string memory, string memory, string memory,
+    string memory)
+    {
+        for (uint i=0; i<Patients.length; i++)
+        {
+            Patient memory patient = Patients[i];
+            if(patient.patient_id==patient_id)
+            {
+                return(patient.name,patient.height,patient.weight,
+                patient.disease,patient.symptom1,patient.symptom2);
+                }
+                }
+                return("Name not Found", "Height not Found", "Weight not Found",
+                 "Disease not Found", "Symptom1 not Found", "Symptom2 not Found");
+                 }
+                 }
+
