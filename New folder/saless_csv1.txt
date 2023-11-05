@@ -1,0 +1,800 @@
+Group-A:-
+1) Write a program non-recursive and recursive program to calculate Fibonacci numbers and analyze their time (O)n and space complexity O(1) and O(n)/O(2^n).
+# Program to display the Fibonacci sequence up to n-th term using non-recursive
+nterms = int(input("Enter number of terms"))
+n1, n2 = 0,1
+count = 0
+#check if the number of terms is valid
+if nterms <= 0:
+    print("Please enter a positive integer")
+elif nterms == 1:
+    print("Fibonacci sequence upto", nterms,":")
+    print(n1)
+    
+#generate fibonacci sequence
+else:
+    print("Fibonacci sequence:")
+    while count < nterms:
+        print(n1)
+        nth = n1 + n2
+        n1 = n2
+        n2 = nth
+        count += 1
+
+# Program to display the Fibonacci sequence up to n-th term using recursive method
+def fibonacci(n):
+    if(n <= 1):
+        return n
+    else:
+        return(fibonacci(n-1) + fibonacci(n-2))
+n = int(input("Enter number of terms:"))
+print("Fibonacci sequence:")
+for i in range(n):
+    print(fibonacci(i))
+
+2) Write a program to implement Huffman Encoding using a greedy strategy.
+ # A Huffman Tree Node
+    
+import heapq
+
+class node:
+    def __init__(self, freq, symbol, left=None, right=None):
+        # frequency of symbol
+        self.freq = freq
+
+        # symbol name (character)
+        self.symbol = symbol
+
+        # node left of current node
+        self.left = left
+
+        # node right of current node
+        self.right = right
+
+        # tree direction (0/1)
+        self.huff = ''
+
+    def __lt__(self, nxt):
+        return self.freq < nxt.freq
+# utility function to print huffman
+# codes for all symbols in the newly
+# created Huffman tree
+def printNodes(node, val=''):
+    
+    # huffman code for current node
+    newVal = val + str(node.huff)
+
+    # if node is not an edge node
+    # then traverse inside it
+    if(node.left):
+        printNodes(node.left, newVal)
+    if(node.right):
+        printNodes(node.right, newVal)
+
+    # if node is edge node then display its huffman code
+    if(not node.left and not node.right):
+        print(f"{node.symbol} -> {newVal}")
+
+
+# characters for huffman tree
+chars = ['a', 'b', 'c', 'd', 'e', 'f']
+
+# frequency of characters
+freq = [ 5, 9, 12, 13, 16, 45]
+
+# list containing unused nodes
+nodes = []
+
+# converting characters and frequencies
+# into huffman tree nodes
+for x in range(len(chars)):
+    heapq.heappush(nodes, node(freq[x], chars[x]))
+
+while len(nodes) > 1:
+    
+    # sort all the nodes in ascending order
+    # based on their frequency
+    left = heapq.heappop(nodes)
+    right = heapq.heappop(nodes)
+
+    # assign directional value to these nodes
+    left.huff = 0
+    right.huff = 1
+
+    # combine the 2 smallest nodes to create
+    # new node as their parent
+    newNode = node(left.freq+right.freq, left.symbol+right.symbol, left, right)
+
+    heapq.heappush(nodes, newNode)
+
+# Huffman Tree 
+printNodes(nodes[0])
+
+3) program to solve a fractional Knapsack problem using a greedy method.O(nlogn).
+class Item:
+    def __init__(self, value, weight):
+        self.value = value
+        self.weight = weight
+def fractionalKnapsack(W, arr):
+    arr.sort(key = lambda x: (x.value/x.weight), reverse = True)
+    finalvalue = 0.0
+    for item in arr:
+        if item.weight <= W:
+            W -= item.weight
+            finalvalue += item.value
+            #if we cant add current item, add fractional part of it
+        else:
+            finalvalue += item.value * W / item.weight
+            break
+    #returing final value
+    return finalvalue
+
+if __name__ == "__main__":
+    W = 50
+    arr = [Item(60, 10), Item(100, 20), Item(120, 30)]
+    #functional call
+    max_val = fractionalKnapsack(W, arr)
+    print(max_val)
+
+4)Write a program to solve a 0-1 Knapsack problem using dynamic programming or branch
+and bound strategy.
+#code
+def knapSack(W, wt, val, n):
+    
+    #base case
+    if n == 0 or W == 0:
+        return 0
+    
+    #if weight of the nth item is more than knapsack of capacity W,
+    #then this item cannot be included in the optimal solution
+    if (wt[n-1] > W):
+        return knapSack(W, wt, val, n-1)
+    
+    #return the maximum of two cases:(1)nth item included (2)not included
+    else:
+        return max(val[n-1] + knapSack(W - wt[n-1], wt, val, n-1), knapSack(W,wt,val,n-1))
+        
+val = [60, 100, 120]
+wt = [10, 20, 30]
+W = 50
+n = len(val)
+print(knapSack(W,wt,val,n))
+
+5) Design n-Queens matrix having first Queen placed. Use backtracking to place remaining Queens to generate the final n-queen’s matrix.
+# N-Queens
+# Python3 program to solve N Queen
+# Problem using backtracking
+global N
+N = 4
+
+def printSolution(board):
+	for i in range(N):
+		for j in range(N):
+			print(board[i][j], end = " ")
+		print()
+
+# A utility function to check if a queen can
+# be placed on board[row][col]. Note that this
+# function is called when "col" queens are
+# already placed in columns from 0 to col -1.
+# So we need to check only left side for
+# attacking queens
+def isSafe(board, row, col):
+
+	# Check this row on left side
+	for i in range(col):
+		if board[row][i] == 1:
+			return False
+
+	# Check upper diagonal on left side
+	for i, j in zip(range(row, -1, -1),
+					range(col, -1, -1)):
+		if board[i][j] == 1:
+			return False
+
+	# Check lower diagonal on left side
+	for i, j in zip(range(row, N, 1),
+					range(col, -1, -1)):
+		if board[i][j] == 1:
+			return False
+
+	return True
+
+def solveNQUtil(board, col):
+	
+	# base case: If all queens are placed
+	# then return true
+	if col >= N:
+		return True
+
+	# Consider this column and try placing
+	# this queen in all rows one by one
+	for i in range(N):
+
+		if isSafe(board, i, col):
+			
+			# Place this queen in board[i][col]
+			board[i][col] = 1
+
+			# recur to place rest of the queens
+			if solveNQUtil(board, col + 1) == True:
+				return True
+
+			# If placing queen in board[i][col
+			# doesn't lead to a solution, then
+			# queen from board[i][col]
+			board[i][col] = 0
+
+	# if the queen can not be placed in any row in
+	# this column col then return false
+	return False
+
+# This function solves the N Queen problem using
+# Backtracking. It mainly uses solveNQUtil() to
+# solve the problem. It returns false if queens
+# cannot be placed, otherwise return true and
+# placement of queens in the form of 1s.
+# note that there may be more than one
+# solutions, this function prints one of the
+# feasible solutions.
+def solveNQ():
+	board = [ [0, 0, 0, 0],
+			[0, 0, 0, 0],
+			[0, 0, 0, 0],
+			[0, 0, 0, 0] ]
+
+	if solveNQUtil(board, 0) == False:
+		print ("Solution does not exist")
+		return False
+
+	printSolution(board)
+	return True
+
+# Driver Code
+solveNQ()
+
+
+
+
+
+
+
+
+Group-B:-
+
+1) Predict the price of the Uber ride from a given pickup point to the agreed drop-off location.
+#importing a required libraries
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+df = pd.read_csv('uber.csv')
+df.head()
+df.info()
+df.columns
+df = df.drop(['Unnamed: 0', 'key'], axis = 1)
+df.head()
+df.shape
+df.dtypes
+df.info()
+df.describe()
+
+#filling missing values
+df.isnull().sum()
+df['dropoff_latitude'].fillna(value = df['dropoff_latitude'].mean(), inplace = True)
+df['dropoff_longitude'].fillna(value = df['dropoff_longitude'].mean(), inplace = True)
+#filling missing values
+df.isnull().sum()
+df.dtypes
+
+#Column pickup_datetime is in wrong format (Object). Convert it to DateTime Format
+df.pickup_datetime = pd.to_datetime(df.pickup_datetime, errors = 'coerce')
+df.dtypes
+
+#To segregate each time of date and time
+df = df.assign(hours = df.pickup_datetime.dt.hour,
+              day = df.pickup_datetime.dt.day,
+              month = df.pickup_datetime.dt.month,
+              year = df.pickup_datetime.dt.year,
+              dayofweek = df.pickup_datetime.dt.dayofweek)
+df.head()
+#drop the column 'pickup_datetime' using drop()
+#'axis = 1' drops the specified column
+df = df.drop('pickup_datetime',axis = 1)
+df.head()
+df.dtypes
+
+#Checking outliers and filling them
+df.plot(kind = "box", subplots = True, layout=(7,2), figsize=(15,20))
+
+#Using the InterQuartile Range to fill the values
+def remove_outlier(df1, col):
+    Q1 = df[col].quantile(0.25)
+    Q3 = df[col].quantile(0.75)
+    IQR = Q3 - Q1
+    lower_whisker = Q1-1.5*IQR
+    upper_whisker = Q3 + 1.5*IQR
+    df[col] = np.clip(df1[col], lower_whisker, upper_whisker)
+    return df1
+
+def treat_outliers_all(df1, col_list):
+    for c in col_list:
+        df1 = remove_outlier(df, c)
+    return df1
+
+df = treat_outliers_all(df, df.iloc[: , 0::])
+df.plot(kind = "box", subplots = True,layout = (7,2),figsize = (15,20))
+
+#Calculate the distance using Haversine to calculate the distance between to points. Can't use Eucladian as it is for flat surface.
+import haversine as hs
+travel_dist = []
+for pos in range(len(df['pickup_longitude'])):
+            long1,lati1,long2,lati2 = [df['pickup_longitude'][pos],df['pickup_latitude'][pos],df['dropoff_longitude'][pos],df['dropoff_latitude'][pos]]
+            loc1 = (lati1, long2)
+            loc2 = (lati2, long2)
+            c = hs.haversine(loc1,loc2)
+            travel_dist.append(c)
+          
+print(travel_dist)
+df['dist_travel_km'] = travel_dist
+df.head()
+
+#Uber doesn't travel over 130 kms so minimize the distance
+df = df.loc[(df.dist_travel_km >= 1) | (df.dist_travel_km <= 130)]
+print("Remaining observations in the dataset:", df.shape)
+
+#Finding inccorect latitude (Less than or greater than 90) and longitude (greater than or less than 180)
+incorrect_coordinates = df.loc[(df.pickup_latitude > 90) |(df.pickup_latitude < -90) |
+                                   (df.dropoff_latitude > 90) |(df.dropoff_latitude < -90) |
+                                   (df.pickup_longitude > 180) |(df.pickup_longitude < -180) |
+                                   (df.dropoff_longitude > 90) |(df.dropoff_longitude < -90)
+                                    ]
+
+df.drop(incorrect_coordinates, inplace = True, errors = 'ignore')
+df.head()
+df.isnull().sum()
+
+sns.heatmap(df.isnull())
+
+#funcation to find the correlation
+corr = df.corr() 
+corr
+
+fig,axis = plt.subplots(figsize = (10,6))
+sns.heatmap(df.corr(),annot = True) 
+#Correlation Heatmap (Light values means highly correlated)
+
+#Dividing the dataset into feature and target values
+x = df[['pickup_longitude','pickup_latitude','dropoff_longitude',
+        'dropoff_latitude','passenger_count','hours','day','month',
+        'year','dayofweek','dist_travel_km']]
+
+y = df['fare_amount']
+
+#Dividing the dataset into training and testing dataset
+from sklearn.model_selection import train_test_split
+
+X_train,X_test,y_train,y_test = train_test_split(x,y,test_size= 0.33)
+from sklearn.linear_model import LinearRegression
+
+regression = LinearRegression()
+regression.fit(X_train,y_train)
+
+#to find the linear intercept
+regression.intercept_
+
+#to find the linear coefficient
+regression.coef_
+
+prediction = regression.predict(X_test)
+print(prediction)
+
+y_test
+
+#Metrics Evaluation using R2, Mean Squared Error, Root Mean Sqared Error
+from sklearn.metrics import r2_score
+r2_score(y_test,prediction)
+from sklearn.metrics import mean_squared_error
+MSE = mean_squared_error(y_test,prediction)
+print(MSE)
+RMSE = np.sqrt(MSE)
+RMSE
+
+#Random Forest Regression
+from sklearn.ensemble import RandomForestRegressor
+
+#Here n_estimators means number of trees you want to build before making the prediction
+rf = RandomForestRegressor(n_estimators=100)
+rf.fit(X_train, y_train)
+
+y_pred = rf.predict(X_test)
+print(y_pred)
+
+#Metrics evaluatin for Random Forest
+R2_Random = r2_score(y_test,y_pred)
+print(R2_Random)
+
+MSE_Random = mean_squared_error(y_test,y_pred)
+print(MSE_Random)
+
+RMSE_Random = np.sqrt(MSE_Random)
+print(RMSE_Random)
+
+
+2) Classify the email using the binary classification method. Email Spam detection has two states: a) Normal State – Not Spam, b) Abnormal State – Spam. Use K-Nearest Neighbors and Support Vector Machine for classification. Analyze their performance. 
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+%matplotlib inline
+import warnings
+warnings.filterwarnings('ignore')
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+from sklearn import metrics
+
+df = pd.read_csv('emails.csv')
+df.head()
+df.columns
+df.isnull().sum()
+#dropna() method removes the rows that contains NULL values
+df.dropna(inplace = True)
+
+df.drop(['Email No.'], axis = 1, inplace = True)
+X = df.drop(['Prediction'], axis = 1)
+y = df['Prediction']
+
+from sklearn.preprocessing import scale
+X = scale(X)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3, random_state = 42)
+
+#kNN Classifier
+from sklearn.neighbors import KNeighborsClassifier
+knn = KNeighborsClassifier(n_neighbors = 7)
+
+knn.fit(X_train, y_train)
+y_pred = knn.predict(X_test)
+print("Prediction", y_pred)
+print("KNN accuracy = ",metrics.accuracy_score(y_test,y_pred))
+print("Confusion matrix",metrics.confusion_matrix(y_test,y_pred))
+
+#SVM classifier
+# cost C = 1
+model = SVC(C = 1)
+
+# fit
+model.fit(X_train, y_train)
+
+# predict
+y_pred = model.predict(X_test)
+
+metrics.confusion_matrix(y_true = y_test, y_pred = y_pred)
+print("SVM accuracy = ", metrics.accuracy_score(y_test,y_pred))
+
+
+3) Implement gradient descent in python
+cur_x = 3
+rate = 0.01
+precision = 0.000001
+previous_step_size = 1
+max_iters = 10000
+iters = 0
+df = lambda x:2*(x+5)
+
+while previous_step_size > precision and iters < max_iters:
+    prev_x = cur_x
+    cur_x = cur_x - rate * df(prev_x)
+    previous_step_size = abs(cur_x - prev_x)
+    iters = iters + 1
+    print("Iteration",iters,"\nX value is", cur_x)
+
+print("The local minimum occurs at", cur_x)
+
+
+4) Implement K-Nearest Neighbors algorithm on diabetes.csv dataset. Compute confusion
+matrix, accuracy, error rate, precision and recall on the given dataset.
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+%matplotlib inline
+import warnings
+warnings.filterwarnings('ignore')
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+from sklearn import metrics
+
+df = pd.read_csv('diabetes.csv')
+df.columns
+df.head()
+df.isnull().sum()
+
+X = df.drop('Outcome', axis = 1)
+y = df['Outcome']
+
+from sklearn.preprocessing import scale
+X = scale(X)
+# split into train and test
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3, random_state = 42)
+
+from sklearn.neighbors import KNeighborsClassifier
+knn = KNeighborsClassifier(n_neighbors=7)
+ 
+knn.fit(X_train, y_train)
+y_pred = knn.predict(X_test)
+
+print("Confusion matrix: ")
+cs = metrics.confusion_matrix(y_test,y_pred)
+print(cs)
+print("Acccuracy = ",metrics.accuracy_score(y_test,y_pred))
+
+#error_rate = 1- accuracy
+total_misclassified = cs[0,1] + cs[1,0]
+print(total_misclassified)
+total_examples = cs[0,0]+cs[0,1]+cs[1,0]+cs[1,1]
+print(total_examples)
+print("Error rate",total_misclassified/total_examples)
+print("Error rate ",1-metrics.accuracy_score(y_test,y_pred))
+
+print("Precision score",metrics.precision_score(y_test,y_pred))
+print("Recall score ",metrics.recall_score(y_test,y_pred))
+print("Classification report ",metrics.classification_report(y_test,y_pred))
+
+
+5) Implement K-Means clustering on sales_data_sample.csv dataset. Determine the number
+of clusters using the elbow method.
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+from sklearn.cluster import KMeans, k_means
+from sklearn.decomposition import PCA
+df = pd.read_csv("sales_data_sample.csv", encoding='latin1')
+df.head()
+df.shape
+df.describe()
+df.info()
+df.isnull().sum()
+df.dtypes
+
+df_drop = ['ADDRESSLINE1', 'ADDRESSLINE2', 'STATUS','POSTALCODE', 'CITY', 'TERRITORY', 'PHONE', 'STATE', 'CONTACTFIRSTNAME', 'CONTACTLASTNAME', 'CUSTOMERNAME', 'ORDERNUMBER']
+df = df.drop(df_drop, axis=1)
+
+df.isnull().sum()
+df.dtypes
+# Checking the categorical columns.
+df['COUNTRY'].unique()
+df['PRODUCTLINE'].unique()
+df['DEALSIZE'].unique()
+
+productline = pd.get_dummies(df['PRODUCTLINE'])
+Dealsize = pd.get_dummies(df['DEALSIZE'])
+Dealsizedf = pd.concat([df, productline,], axis=1)
+
+df_drop = ['COUNTRY','PRODUCTLINE','DEALSIZE']
+df = df.drop(df_drop, axis=1)
+df['PRODUCTCODE'] = pd.Categorical(df['PRODUCTCODE']).codes
+df.drop('ORDERDATE', axis=1, inplace=True)
+df.dtypes #All the datatypes are converted into numeric
+
+#Plotting the Elbow Plot to determine the number of clusters.
+distortions = [] # Within Cluster Sum of Squares from the centroid
+K = range(1,10)
+for k in K:
+    kmeanModel = KMeans(n_clusters=k)
+    kmeanModel.fit(df)
+    distortions.append(kmeanModel.inertia_) 
+
+plt.figure(figsize=(16,8))
+plt.plot(K, distortions, 'bx-')
+plt.xlabel('k')
+plt.ylabel('Distortion')
+plt.title('The Elbow Method showing the optimal k')
+plt.show()
+
+X_train = df.values
+X_train.shape
+model = KMeans(n_clusters = 3, random_state = 2)
+model = model.fit(X_train)
+predictions = model.predict(X_train)
+
+unique, counts = np.unique(predictions, return_counts = True)
+counts = counts.reshape(1,3)
+
+counts_df = pd.DataFrame(counts, columns=['Cluster1','Cluster2','Cluster3'])
+counts_df.head()
+
+#Visualization
+#Converting all the features into 2 columns 
+#to make it easy to visualize using Principal COmponent Analysis
+pca = PCA(n_components = 2)
+#Creating a DataFrame
+reduced_X = pd.DataFrame(pca.fit_transform(X_train),columns=['PCA1','PCA2'])
+reduced_X.head()
+
+#plotting the normal scatter plot
+plt.figure(figsize = (14,10))
+plt.scatter(reduced_X['PCA1'], reduced_X['PCA2'])
+
+#Finding the centriods. (3 Centriods in total. 
+#Each Array contains a centroids for particular feature)
+model.cluster_centers_
+
+reduced_centers = pca.transform(model.cluster_centers_)
+reduced_centers
+
+#Plotting the centriods
+plt.figure(figsize=(14,10))
+plt.scatter(reduced_X['PCA1'],reduced_X['PCA2'])
+plt.scatter(reduced_centers[:,0],reduced_centers[:,1],color='black',marker='x',s=300)
+
+#Adding the Clusters to the reduced dataframe.
+reduced_X['Clusters'] = predictions
+reduced_X.head()
+
+#plotting the clusters
+plt.figure(figsize = (14,10))
+plt.scatter(reduced_X[reduced_X['Clusters'] == 0].loc[:,'PCA1'],reduced_X[reduced_X['Clusters'] == 0].loc[:,'PCA2'],color='slateblue')
+plt.scatter(reduced_X[reduced_X['Clusters'] == 1].loc[:,'PCA1'],reduced_X[reduced_X['Clusters'] == 1].loc[:,'PCA2'],color='springgreen')
+plt.scatter(reduced_X[reduced_X['Clusters'] == 2].loc[:,'PCA1'],reduced_X[reduced_X['Clusters'] == 2].loc[:,'PCA2'],color='indigo')
+
+plt.scatter(reduced_centers[:,0],reduced_centers[:,1],color='black',marker='x',s=300)
+
+
+
+
+
+
+Group-C:-
+1) Installation of Meta mask and study spending Ether per transaction. OR
+   Understand and explore the working of blockchain technology and its applications.
+Steps to create metamask:
+Step 1: Go to Chrome Web Store Extensions Section.
+Step 2: Search MetaMask.
+Step 3: Download the metamask.
+Step 4: Click the Add to Chrome button.
+Step 5: Once installation is complete this page will be displayed. Click on the Get Started button.Get started
+Step 6: This is the first time creating a wallet, so click the Create a Wallet button. If there is already a wallet then import the already created using the Import Wallet button.Create Wallet
+Step 7: Click I Agree button to allow data to be collected to help improve MetaMask or else click the No Thanks button. The wallet can still be created even if the user will click on the No Thanks button.
+Step 8: Create a password for your wallet. This password is to be entered every time the browser is launched and wants to use MetaMask. A new password needs to be created if chrome is uninstalled or if there is a switching of browsers. In that case, go through the Import Wallet button. This is because MetaMask stores the keys in the browser. Agree to Terms of Use.
+Step 9: "METAMASK" Account created successfully
+
+2) Create your own wallet using Metamask for crypto transactions.
+   Understand and explore the working of blockchain technology and its application.
+Step 1: Login to the Metamask account and checked the account before transactions . Accopunt 01 is having 0 RopstenETH.
+Step 2: Login to the metamask account and checked the account before transactions . "account 1" account 02 is having 1 ETH . Start the transaction from the "account 1". click on send.
+Step 3: Enter the public address of "Account 1".
+Step4: Click the balance account in asset and enter the account to send the ETH. Check the details of the asset and amount. Click on the next button.
+Step5:Transaction status will shown pending for few time wait.
+
+3) Write a smart contract on a test network, for Bank account of a customer for following operations: Deposit money, Withdraw Money, Show balance
+// SPDX-License-Identifier: MIT
+
+pragma solidity >=0.7.0;
+
+// Write  a  smart  contract  on  a  test  network,  for  Bank  account  of  a  customer  for
+// following operations: Deposit money | Withdraw Money | Show balance
+contract Bank {
+    mapping(address => uint) public user_account;
+    mapping(address => bool) public user_exist;
+
+    function create_account() public payable returns (string memory) {
+        require(user_exist[msg.sender] == false, "Account Already created!");
+        user_account[msg.sender] = msg.value;
+        user_exist[msg.sender] = true;
+        return "Account created";
+    }
+
+    function deposit(uint amount) public payable returns (string memory) {
+        require(user_exist[msg.sender] == true, "Account not created!");
+        require(amount > 0, "Amount should be greater than 0");
+        user_account[msg.sender] += amount;
+        return "Amount deposisted sucessfully";
+    }
+
+    function withdraw(uint amount) public payable returns (string memory) {
+        require(user_exist[msg.sender] == true, "Account not created!");
+        require(amount > 0, "Amount should be greater than 0");
+        require(
+            user_account[msg.sender] >= amount,
+            "Amount is greater than money deposisted"
+        );
+        user_account[msg.sender] -= amount;
+        return "Amount withdrawn sucessfully";
+    }
+
+    function account_balance() public view returns (uint) {
+        return user_account[msg.sender];
+    }
+
+    function account_exists() public view returns (bool) {
+        return user_exist[msg.sender];
+    }
+}
+
+
+4) Write a program in solidity to create Student data. Use the following constructs:
+Structures, Arrays, Fallback
+//code
+pragma solidity ^0.6.0;
+contract student_management {
+    struct student {
+        int stud_id;
+        string name;
+        string department;
+    }
+    student[] students;
+    function add_stud(int stud_id, string memory name, string memory department ) public {
+        student memory stud = student(stud_id , name, department);
+        students.push(stud);
+    }
+    function getStudent(int stud_id) public view returns(string memory, string memory) {
+        for(uint i = 0; i<students.length; i++) {
+            student memory stud = students [i];
+            if(stud.stud_id == stud_id)  {
+                return(stud.name, stud.department);
+
+            }
+        }
+        return("not found","not found");
+
+    }
+
+}
+
+
+5) Write a survey report on types of Blockchains and its real time use cases.
+There are 4 types of blockchain:
+-Public Blockchain: No central authority
+-Private Blockchain: Controlled by one Authority
+-Hybrid Blockchain: Controlled by a permissionless process
+-Consortium Blockchain: Controlled by group. It is a creative approach that solves the needs of the organization. This blockchain validates the transaction and also initiates or receives transactions.
+Advantages: Trustable, Secure, Anonymous Nature, Decentralized.
+Disadvantages: transaction very slow, Energy Consumption, No central authority.
+
+6) mini project: Develop a Blockchain-based application for health-related medical records.
+// SPDX-License-Identifier: MIT
+pragma solidity 0.6;
+contract Health_Records
+{
+    struct Patient
+
+    {
+        int patient_id;
+        string name;
+        string height;
+        string weight;
+        string disease;
+        string symptom1;
+        string symptom2;
+    }
+    Patient[] Patients;
+
+    function addPatient(int patient_id, string memory name, string 
+    memory height, string memory weight, string memory disease, string
+    memory symptom1, string memory symptom2) public 
+    {
+        Patient memory patient =
+Patient(patient_id,name,height,weight,disease,symptom1,symptom2);
+Patients.push(patient);
+    }
+    function getPatient(int patient_id) public view returns(string
+    memory, string memory, string memory, string memory, string memory,
+    string memory)
+    {
+        for (uint i=0; i<Patients.length; i++)
+        {
+            Patient memory patient = Patients[i];
+            if(patient.patient_id==patient_id)
+            {
+                return(patient.name,patient.height,patient.weight,
+                patient.disease,patient.symptom1,patient.symptom2);
+                }
+                }
+                return("Name not Found", "Height not Found", "Weight not Found",
+                 "Disease not Found", "Symptom1 not Found", "Symptom2 not Found");
+                 }
+                 }
+
